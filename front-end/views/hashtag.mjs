@@ -15,6 +15,13 @@ import {createHeading} from "../components/heading.mjs";
 // Hashtag view: show all tweets containing this tag
 
 function hashtagView(hashtag) {
+  //only fetch data from the server and avoid the flashing on slow network
+  if (state.currentHashtag !== hashtag) {
+    state.currentHashtag = hashtag;
+    state.hashtagBlooms = [];
+    apiService.getBloomsByHashtag(hashtag);
+  }
+  //this one if statement fixes the flashing behavior by checking if the hashtag selected is already running or not
   destroy();
 
   apiService.getBloomsByHashtag(hashtag);
