@@ -83,7 +83,7 @@ async function handleFollow(event) {
   await apiService.followUser(username);
   await apiService.getWhoToFollow();
 }
-
+//unfollow handler
 async function handleUnfollow(event) {
   const button = event.target;
   const username = button.getAttribute("data-username");
