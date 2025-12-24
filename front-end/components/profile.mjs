@@ -40,7 +40,7 @@ function createProfile(template, {profileData, whoToFollow, isLoggedIn}) {
   if (!isLoggedIn) {
     followButtonEl.style.display = "none";
   }
-
+//follow button based on condition
   if (whoToFollow.length > 0) {
     const whoToFollowList = whoToFollowContainer.querySelector("[data-who-to-follow]");
     const whoToFollowTemplate = document.querySelector("#who-to-follow-chip");
