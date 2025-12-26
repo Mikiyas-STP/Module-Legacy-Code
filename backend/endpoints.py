@@ -7,7 +7,6 @@ from data.users import (
     get_user,
     register_user,
 )
-
 from flask import Response, jsonify, make_response, request
 from flask_jwt_extended import (
     create_access_token,

@@ -113,8 +113,6 @@ async function handleRebloom(event) {
   const button = event.target;
   const id = button.getAttribute("data-id");
   if (!id) return;
-
-  // await apiService.updateRebloomCounter(id);
   await apiService.postRebloom(id);
 }
 

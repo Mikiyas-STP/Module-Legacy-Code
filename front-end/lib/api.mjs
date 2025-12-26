@@ -295,7 +295,6 @@ const apiService = {
   login,
   signup,
   logout,
-
   // Bloom methods
   getBloom,
   fetchBloomData,
@@ -303,7 +302,6 @@ const apiService = {
   postBloom,
   getBloomsByHashtag,
   postRebloom,
-
   // User methods
   getProfile,
   followUser,

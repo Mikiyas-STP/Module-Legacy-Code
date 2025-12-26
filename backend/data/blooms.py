@@ -1,8 +1,6 @@
 import datetime
-
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
-
 from data.connection import db_cursor
 from data.users import User
 

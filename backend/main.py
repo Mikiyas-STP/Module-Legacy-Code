@@ -17,7 +17,6 @@ from endpoints import (
     update_rebloom_counter,
     send_rebloom,
 )
-
 from dotenv import load_dotenv
 from flask import Flask
 from flask_cors import CORS
