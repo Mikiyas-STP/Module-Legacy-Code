@@ -15,6 +15,12 @@ import {createHeading} from "../components/heading.mjs";
 // Hashtag view: show all tweets containing this tag
 
 function hashtagView(hashtag) {
+  if (state.currentHashtag !== hashtag) {
+    state.currentHashtag = hashtag;
+    state.hashtagBlooms = [];
+    apiService.getBloomsByHashtag(hashtag);
+  }
+
   destroy();
 
   apiService.getBloomsByHashtag(hashtag);
