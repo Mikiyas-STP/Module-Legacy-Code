@@ -42,45 +42,31 @@ def add_bloom(
             )
 
 
-def get_blooms_for_user(
-    username: str, *, before: Optional[int] = None, limit: Optional[int] = None
-) -> List[Bloom]:
+def get_blooms_for_user(username: str, *, before: Optional[int] = None, limit: Optional[int] = None) -> List[Bloom]:
     with db_cursor() as cur:
-        kwargs = {
-            "sender_username": username,
-        }
-        if before is not None:
-            before_clause = "AND send_timestamp < %(before_limit)s"
+        kwargs = {"sender_username": username}
+        before_clause = "AND id < %(before_limit)s" if before else ""
+        if before:
             kwargs["before_limit"] = before
-        else:
-            before_clause = ""
 
         limit_clause = make_limit_clause(limit, kwargs)
 
         cur.execute(
             f"""SELECT
-              blooms.id, users.username, content, send_timestamp, reblooms, original_bloom_id 
-            FROM
-              blooms INNER JOIN users ON users.id = blooms.sender_id
-            WHERE
-              username = %(sender_username)s
-              {before_clause}
-            ORDER BY send_timestamp DESC
-            {limit_clause}
+                  blooms.id, users.username, content, send_timestamp, reblooms, original_bloom_id
+                FROM blooms
+                  INNER JOIN users ON users.id = blooms.sender_id
+                WHERE username = %(sender_username)s
+                  {before_clause}
+                ORDER BY id DESC  -- highest id first, shows latest reblooms on top
+                {limit_clause}
             """,
             kwargs,
         )
         rows = cur.fetchall()
         blooms = []
         for row in rows:
-            (
-                bloom_id,
-                sender_username,
-                content,
-                timestamp,
-                reblooms,
-                original_bloom_id,
-            ) = row
+            bloom_id, sender_username, content, timestamp, reblooms, original_bloom_id = row
             blooms.append(
                 Bloom(
                     id=bloom_id,
@@ -92,7 +78,6 @@ def get_blooms_for_user(
                 )
             )
     return blooms
-
 
 def get_bloom(bloom_id: int) -> Optional[Bloom]:
     with db_cursor() as cur:
