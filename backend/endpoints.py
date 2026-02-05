@@ -159,7 +159,7 @@ def send_bloom():
     user = get_current_user()
 #debugged for extra long bloom
     content = request.json.get("content","")
-    MAX_BLOOM_LENGTH = 280
+    MAX_BLOOM_LENGTH = 500
     if len(content) > MAX_BLOOM_LENGTH:
         return make_response(
             {
