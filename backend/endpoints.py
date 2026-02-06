@@ -74,7 +74,6 @@ def register():
         }
     )
 
-
 @jwt_required()
 def self_profile():
     username = get_current_user().username
@@ -173,20 +172,8 @@ def send_bloom():
         return type_check_error
 
     user = get_current_user()
-    #Extract content safely
-    content = request.json.get("content", "")
-    # Limit content length
-    MAX_BLOOM_LENGTH = 280
-    if len(content) > MAX_BLOOM_LENGTH:
-        return make_response(
-            {
-                "success": False,
-                "message": f"Bloom cannot exceed {MAX_BLOOM_LENGTH} characters",
-            },
-            400,
-        )
 
-    blooms.add_bloom(sender=user, content=content)
+    blooms.add_bloom(sender=user, content=request.json["content"])
 
     return jsonify(
         {
@@ -233,39 +220,11 @@ def home_timeline():
 
     return jsonify(sorted_blooms)
 
+
 def user_blooms(profile_username):
     user_blooms = blooms.get_blooms_for_user(profile_username)
     user_blooms.reverse()
     return jsonify(user_blooms)
-
-def update_rebloom_counter(bloom_id):
-    try:
-        id_int = int(bloom_id)
-    except ValueError:
-        return make_response((f"Invalid bloom id", 400))
-    blooms.update_rebloom_counter(id_int)
-    return jsonify(
-        {
-            "success": True,
-        }
-    )
-
-@jwt_required()
-def send_rebloom():
-    user = get_current_user()
-    bloom_id = request.json["id"]
-    try:
-        id_int = int(bloom_id)
-    except ValueError:
-        return make_response((f"Invalid bloom id", 400))
-    blooms.add_rebloom(sender=user, id=id_int)
-
-    return jsonify(
-        {
-            "success": True,
-        }
-    )
-
 
 
 @jwt_required()
@@ -301,4 +260,3 @@ def verify_request_fields(names_to_types: Dict[str, type]) -> Union[Response, No
                 )
             )
     return None
-
