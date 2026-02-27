@@ -17,13 +17,11 @@ import {createHeading} from "../components/heading.mjs";
 function hashtagView(hashtag) {
   if (state.currentHashtag !== hashtag) {
     state.currentHashtag = hashtag;
-    state.hashtagBlooms = [];
+    state.hashtagBlooms = null;
     apiService.getBloomsByHashtag(hashtag);
   }
 
   destroy();
-
-  apiService.getBloomsByHashtag(hashtag);
 
   renderOne(
     state.isLoggedIn,
@@ -50,12 +48,18 @@ function hashtagView(hashtag) {
     "heading-template",
     createHeading
   );
-  renderEach(
-    state.hashtagBlooms || [],
-    getTimelineContainer(),
-    "bloom-template",
-    createBloom
-  );
+
+  const timelineContainer = getTimelineContainer();
+if (state.hashtagBlooms === null) {
+    timelineContainer.innerHTML = "<p>Loading...</p>"; // or a spinner
+} else {
+    renderEach(
+        state.hashtagBlooms,
+        timelineContainer,
+        "bloom-template",
+        createBloom
+    );
+}
 }
 
 export {hashtagView};
