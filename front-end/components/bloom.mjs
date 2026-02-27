@@ -10,7 +10,6 @@ import { apiService } from "../index.mjs";
  * "sender": username,
  * "content": "string from textarea",
  * "sent_timestamp": "datetime as ISO 8601 formatted string"},
- * "reblooms": "reblooms count",
  * "original_bloom_id": "id of the rebloomed post"
 
  */
@@ -38,9 +37,9 @@ const createBloom = (template, bloom) => {
     ...bloomParser.parseFromString(_formatHashtags(bloom.content), "text/html")
       .body.childNodes
   );
-  // redo to "bloom.reblooms || 0" once reblooms implemented to object
-  rebloomCountEl.textContent = `Rebloomed ${bloom.reblooms} times`;
-  rebloomCountEl.hidden = bloom.reblooms == 0;
+
+  rebloomCountEl.textContent = `Rebloomed ${bloom.reblooms_count} times`;
+  rebloomCountEl.hidden = bloom.reblooms_count === 0;
   rebloomButtonEl.setAttribute("data-id", bloom.id || "");
   rebloomButtonEl.addEventListener("click", handleRebloom);
   rebloomInfoEl.hidden = bloom.original_bloom_id === null;
@@ -117,7 +116,16 @@ async function handleRebloom(event) {
   const button = event.target;
   const id = button.getAttribute("data-id");
   if (!id) return;
-  await apiService.postRebloom(id);
+  try {
+    await apiService.postRebloom(id);
+    const bloomArticle = button.closest("[data-bloom]");
+    const rebloomCountEl = bloomArticle.querySelector("[data-rebloom-count]");
+    let currentCount = parseInt(rebloomCountEl.textContent.replace(/\D/g, "")) || 0;
+    currentCount += 1;
+    rebloomCountEl.textContent = `Rebloomed ${currentCount} times`;
+    rebloomCountEl.hidden = currentCount === 0;
+  } catch (err) {
+    console.error("Failed to rebloom:", err);
+  }
 }
-
 export { createBloom, handleRebloom };
