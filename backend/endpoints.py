@@ -155,11 +155,10 @@ def send_bloom():
     type_check_error = verify_request_fields({"content": str})
     if type_check_error is not None:
         return type_check_error
-
     user = get_current_user()
-#debugged for extra long bloom
+    
     content = request.json.get("content","")
-    MAX_BLOOM_LENGTH = 500
+    MAX_BLOOM_LENGTH = 280
     if len(content) > MAX_BLOOM_LENGTH:
         return make_response(
             {
