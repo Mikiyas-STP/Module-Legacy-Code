@@ -182,7 +182,10 @@ def home_timeline():
     current_user = get_current_user()
 
     # Get blooms from followed users
-    followed_users = get_followed_usernames(current_user)
+    followed_users = [username
+                      for username in get_followed_usernames(current_user)
+                       if username != current_user.username ]
+    
     nested_user_blooms = [
         blooms.get_blooms_for_user(followed_user, limit=50)
         for followed_user in followed_users
